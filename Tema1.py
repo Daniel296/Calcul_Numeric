@@ -35,13 +35,11 @@ def checkMultiplicationAssociativity():
     http://en.wikipedia.org/w/index.php?title=Strassen_algorithm&oldid=498910018#Source_code_of_the_Strassen_algorithm_in_C_language
 """
 def strassen(A, B):
-    A = np.matrix(A)
-    B = np.matrix(B)
     n = len(A)
     if n==1:
         C = np.multiply(A, B)
     else:
-        new_size = n/2
+        new_size = n//2
         """ Initialize the submatrices """
         a11 = np.zeros(shape=(new_size, new_size))
         a12 = np.zeros(shape=(new_size, new_size))
@@ -80,24 +78,24 @@ def strassen(A, B):
                 bResult = np.add(b11, b22)
                 p1 = strassen(aResult, bResult)
                 
-                aResult = np.substract(a21, a22)
+                aResult = np.subtract(a21, a22)
                 p2 = strassen(aResult, b11)
                 
-                bResult = np.substract(b12, b22)
+                bResult = np.subtract(b12, b22)
                 p3 = strassen(a11, bResult)
                 
-                bResult = np.substract(b21, b11)
+                bResult = np.subtract(b21, b11)
                 p4 = strassen(a22, bResult)
                 
                 aResult = np.add(a11, a12)
                 p5 = strassen(aResult, b22)
                 
-                aResult = np.substract(a21, a11)
+                aResult = np.subtract(a21, a11)
                 bResult = np.add(b11, b12)
                 p6 = strassen(aResult, bResult)
                 
-                aResult = np.substract(a12, a22)
-                bResult = np.substract(b21, a22)
+                aResult = np.subtract(a12, a22)
+                bResult = np.subtract(b21, a22)
                 p7 = strassen(aResult, bResult)
                 
                 c11 = p1 + p4 - p5 + p7
