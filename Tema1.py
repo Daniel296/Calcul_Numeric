@@ -102,17 +102,33 @@ def multiply_strassen(matrix_a, matrix_b, n, n_min):
 
 
 if __name__ == "__main__":
-    matrix_size = 8
-    n_min = 1
-    A = np.zeros(shape=(matrix_size, matrix_size))
-    B = np.zeros(shape=(matrix_size, matrix_size))
-    for init_i in range(0, matrix_size):
-        for init_j in range(0, matrix_size):
-            A[init_i][init_j] = init_i
-            B[init_i][init_j] = init_j
 
     print("Final result is stated for u = {0} and power = {1}".format(machine_precision_sum()[0],
                                                                       machine_precision_sum()[1]))
     print(check_non_associativity())
     print("The product operation is associative for : ", check_multiplication_associativity())
-    print(multiply_strassen(A, B, matrix_size, n_min))
+
+    file = open("test.txt", "r")
+    text = file.read()
+    file.close()
+    matrices = text.split("\n\n")
+    if len(matrices) > 2 or  len(matrices) < 2:
+        print("Please provide the proper number of matrices!\n");
+    else:
+        n_min = 1
+        for matrix_index in range(0, len(matrices)):
+            lines = matrices[matrix_index].split('\n')
+            lines[:] = [item for item in lines if item != '']
+            if matrix_index == 0:
+                A = np.zeros(shape=(len(lines), len(lines)))
+            elif matrix_index == 1:
+                B = np.zeros(shape=(len(lines), len(lines)))
+            for line_index in range(0, len(lines)):
+                cols = lines[line_index].split()
+                for col_index in range(0, len(cols)):
+                    if matrix_index == 0:
+                        A[line_index][col_index] = cols[col_index]
+                    elif matrix_index == 1:
+                        B[line_index][col_index] = cols[col_index]
+
+        print(multiply_strassen(A, B, len(lines), n_min))
