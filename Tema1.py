@@ -14,7 +14,8 @@ def machine_precision_sum():
 """ Problema 2 """
 
 
-def check_non_associativity(x=1.0):
+def check_non_associativity():
+    x = 1.0
     y = z = machine_precision_sum()[0]
     boolean_value = ((x + y) + z == x + (y + z))
     if boolean_value is False:
