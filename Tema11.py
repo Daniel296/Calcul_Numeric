@@ -133,10 +133,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
         self.ui.Enunt.setText("Implementati inmultirea dintre doua matrici prin intermediul algoritmului lui Strassen!\n")
         n_min = self.ui.n_val.toPlainText()
         path = self.ui.path.toPlainText()
-        if n_min == ' ' or path == ' ':
+        if n_min == "" or path == "":
             msgBox = QtGui.QMessageBox(self)
             msgBox.setIcon(QtGui.QMessageBox.Critical)
             msgBox.setText("All fields above need to be completed!")
+            msgBox.show()
         else:
             n_min = int(n_min)
             file = open("test.txt", "r")
@@ -144,17 +145,11 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             file.close()
             matrices = text.split("\n\n")
             if len(matrices) > 2 or len(matrices) < 2:
-                print("Please provide the proper number of matrices!\n");
+                msgBox = QtGui.QMessageBox(self)
+                msgBox.setIcon(QtGui.QMessageBox.Critical)
+                msgBox.setText("Please provide the proper number of matrices!")
+                msgBox.show()
             else:
-                n_min = 1
-                file = open(path, "r")
-                text = file.read()
-                file.close()
-                matrices = text.split("\n\n")
-                if len(matrices) > 2 or len(matrices) < 2:
-                    msgBox = QtGui.QMessageBox(self)
-                    msgBox.setIcon(QtGui.QMessageBox.Critical)
-                    msgBox.setText("Please provide the proper number of matrices!")
                 for matrix_index in range(0, len(matrices)):
                     lines = matrices[matrix_index].split('\n')
                     lines[:] = [item for item in lines if item != '']
@@ -169,15 +164,15 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                                 A[line_index][col_index] = cols[col_index]
                             elif matrix_index == 1:
                                 B[line_index][col_index] = cols[col_index]
-            result = multiply_strassen(A, B, len(lines), n_min)
-            matrix = ''
-            for i in range(0, len(lines)):
-                matrix += "\n"
-                for j in range(0, len(lines)):
-                    matrix += str(result[i][j])
-                    matrix += " "
+                result = multiply_strassen(A, B, len(lines), n_min)
+                matrix = ''
+                for i in range(0, len(lines)):
+                    matrix += "\n"
+                    for j in range(0, len(lines)):
+                        matrix += str(result[i][j])
+                        matrix += " "
 
-            self.ui.Result.setText(matrix)
+                self.ui.Result.setText(matrix)
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
