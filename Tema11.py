@@ -1,6 +1,8 @@
 import sys
 from PyQt4 import QtCore, QtGui, uic
+from math import ceil, log
 import numpy as np
+import time
 
 """ Problema 1 """
 def machine_precision_sum():
@@ -100,11 +102,12 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super(MyApp, self).__init__()
         self.ui = Ui_MainWindow()
+        self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.Problema1.clicked.connect(self.Problema1)
-        self.ui.Problema21.clicked.connect(self.Problema21)
-        self.ui.Problema22.clicked.connect(self.Problema22)
-        self.ui.Problema3.clicked.connect(self.Problema3)
+        self.ui.Problem1.clicked.connect(self.Problema1)
+        self.ui.Problem21.clicked.connect(self.Problema21)
+        self.ui.Problem22.clicked.connect(self.Problema22)
+        self.ui.Problem3.clicked.connect(self.Problema3)
 
     def Problema1(self):
         self.ui.Enunt.setText("Sa se identifice cel mai mic numar pozitiv u > 0(precizia masina), astfel incat in urma operatiei de adunare efectuate de calculator intre 1 si u, sa se obtina un rezultat diferit de 1.\n")
@@ -144,6 +147,10 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
             text = file.read()
             file.close()
             matrices = text.split("\n\n")
+            liniiA = 0;
+            coloaneA = 0;
+            liniiB = 0;
+            coloaneB = 0;
             if len(matrices) > 2 or len(matrices) < 2:
                 msgBox = QtGui.QMessageBox(self)
                 msgBox.setIcon(QtGui.QMessageBox.Critical)
@@ -154,24 +161,44 @@ class MyApp(QtGui.QMainWindow, Ui_MainWindow):
                     lines = matrices[matrix_index].split('\n')
                     lines[:] = [item for item in lines if item != '']
                     if matrix_index == 0:
-                        A = np.zeros(shape=(len(lines), len(lines)))
+                        liniiA = len(lines)
+                        coloaneA = len(lines[0].split())
+                    if matrix_index == 1:
+                        liniiB = len(lines)
+                        coloaneB = len(lines[0].split())
+                    if matrix_index == 0:
+                        A = np.zeros(shape=(liniiA, coloaneA))
                     elif matrix_index == 1:
-                        B = np.zeros(shape=(len(lines), len(lines)))
-                    for line_index in range(0, len(lines)):
-                        cols = lines[line_index].split()
-                        for col_index in range(0, len(cols)):
-                            if matrix_index == 0:
+                        B = np.zeros(shape=(liniiB, coloaneB))
+                    if matrix_index == 0:
+                        for line_index in range(0, liniiA):
+                            cols = lines[line_index].split()
+                            for col_index in range(0, coloaneA):
                                 A[line_index][col_index] = cols[col_index]
-                            elif matrix_index == 1:
+                    if matrix_index == 1:
+                        for line_index in range(0, liniiB):
+                            cols = lines[line_index].split()
+                            for col_index in range(0, coloaneB):
                                 B[line_index][col_index] = cols[col_index]
-                result = multiply_strassen(A, B, len(lines), n_min)
+                nextPowerOfTwo = lambda n: 2 ** int(ceil(log(n, 2)))
+                max_A = max(liniiA, coloaneA)
+                max_B = max(max_A, coloaneB)
+                m = nextPowerOfTwo(max_B)
+                APrep = [[0 for i in range(m)] for j in range(m)]
+                BPrep = [[0 for i in range(m)] for j in range(m)]
+                for i in range(liniiA):
+                    for j in range(coloaneA):
+                        APrep[i][j] = A[i][j]
+                for i in range(liniiB):
+                    for j in range(coloaneB):
+                        BPrep[i][j] = B[i][j]
+                result = multiply_strassen(APrep, BPrep, m, n_min)
                 matrix = ''
-                for i in range(0, len(lines)):
+                for i in range(0, m):
                     matrix += "\n"
-                    for j in range(0, len(lines)):
+                    for j in range(0, m):
                         matrix += str(result[i][j])
                         matrix += " "
-
                 self.ui.Result.setText(matrix)
 
 if __name__ == "__main__":

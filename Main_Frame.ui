@@ -25,28 +25,28 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="Problema1">
+      <widget class="QPushButton" name="Problem1">
        <property name="text">
         <string>Problema1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problema21">
+      <widget class="QPushButton" name="Problem21">
        <property name="text">
         <string>Problema2.1</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problema22">
+      <widget class="QPushButton" name="Problem22">
        <property name="text">
         <string>Problema2.2</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problema3">
+      <widget class="QPushButton" name="Problem3">
        <property name="text">
         <string>Problema3</string>
        </property>
@@ -71,7 +71,7 @@
      </font>
     </property>
     <property name="text">
-     <string>                    CALCUL NUMERIC</string>
+     <string>                    NUMERICAL CALCULUS</string>
     </property>
     <property name="textFormat">
      <enum>Qt::PlainText</enum>
@@ -220,7 +220,7 @@
      </font>
     </property>
     <property name="text">
-     <string>                       ENUNTUL PROBLEMEI</string>
+     <string>                       STATEMENT</string>
     </property>
    </widget>
    <zorder>verticalLayoutWidget</zorder>
