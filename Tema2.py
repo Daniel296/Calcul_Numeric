@@ -4,65 +4,101 @@ from scipy.spatial import distance
 from math import sqrt
 
 """ Aux functions """
+
+
 def vectorXmatrix(vector, matrix):
     if (len(vector) != len(matrix)):
-        print("ERROR nr elements vector != nr lines matrix!");
-        return [];
+        print("ERROR nr elements vector != nr lines matrix!")
+        return []
 
-    result = [];
+    result = []
     for nrCol in range(0, len(matrix[0])):
-        element = 0.0;
+        element = 0.0
         for nrLine in range(0, len(matrix)):
-            element += vector[nrLine] * matrix[nrLine][nrCol];
-        result.append(element);
+            element += vector[nrLine] * matrix[nrLine][nrCol]
+        result.append(element)
 
-    return result;
+    return result
+
 
 def matrixXvector(matrix, vector):
     if (len(matrix[0]) != len(vector)):
-        print("ERROR nr elements vector != nr columns matrix!");
-        return [];
+        print("ERROR nr elements vector != nr columns matrix!")
+        return []
 
-    result = [];
+    result = []
 
     for nrLine in range(0, len(matrix)):
-        element = 0.0;
+        element = 0.0
         for nrCol in range(0, len(matrix[0])):
-            element += vector[nrCol] * matrix[nrLine][nrCol];
-        result.append(element);
+            element += vector[nrCol] * matrix[nrLine][nrCol]
+        result.append(element)
 
-    return result;
+    return result
+
 
 def euclidianNorma(z):
-    norma = 0.0;
+    norma = 0.0
     for i in range(0, len(z)):
-        norma = norma + z[i] * z[i];
-    return sqrt(norma);
+        norma = norma + z[i] * z[i]
+    return sqrt(norma)
+
 
 def vectorMinusVector(a, b):
-    result = [];
+    result = []
     for i in range(0, len(a)):
-        result.append(a[i] - b[i]);
-    return result;
+        result.append(a[i] - b[i])
+    return result
+
 
 """ Bonus - Thomas Algorithm """
+
+
+def swap(a, b, poz_a, poz_b):
+    aux = a[poz_a]
+    a[poz_a] = b[poz_b]
+    b[poz_b] = aux
+    return a, b
+
+
 def tri_diag_matrix_solver(a, b, c, results):
-    nf = len(results)  # number of equations
-    ac, bc, cc, results_copy = map(np.array, (a, b, c, results))  # copy arrays
-    for it in xrange(1, nf):
-        mc = ac[it - 1] / bc[it - 1]
-        bc[it] = bc[it] - mc * cc[it - 1]
-        results_copy[it] = results_copy[it] - mc * results_copy[it - 1]
+    diag_size = len(a)  # number of equations
+    d, e, cc, results_copy = map(np.array, (a, b, c, results))  # copy arrays
+    f = np.zeros(n - 1)
+    print 0,d,e,cc, f, results_copy
+    for it in range(0, diag_size - 1):
+        if d[it] < cc[it]:
+            d, cc = swap(d, cc, it, it)
+            d, e = swap(d, e, it + 1, it)
+            if it < diag_size - 2:
+                e, f = swap(e, f, it + 1, it)
+            aux = results_copy[it]
+            results_copy[it] = results_copy[it + 1]
+            results_copy[it + 1] = aux
 
-    xc = bc
-    xc[-1] = results_copy[-1] / bc[-1]
+        if it > 0:
+            d[it] = (-1 * d[it - 1] / cc[it - 1]) * d[it] + e[it - 1]
+            e[it] = (-1 * d[it - 1] / cc[it - 1]) * e[it] + f[it - 1]
+            f[it] *= (-1 * d[it - 1] / cc[it - 1])
+            results_copy[it] = results_copy[it - 1] + results_copy[it]*(-1 * d[it - 1] / cc[it - 1])
 
-    for il in xrange(nf - 2, -1, -1):
-        xc[il] = (results_copy[il] - cc[il] * xc[il + 1]) / bc[il]
+        print it + 1, d, e, cc, f, results_copy
+
+
+    print e, d, f, results_copy
+
+    xc = np.zeros(diag_size)
+    xc[diag_size-1] = results_copy[diag_size-1]/d[diag_size-1]
+    xc[diag_size-2] = (results_copy[diag_size-2] - xc[diag_size-1] * e[diag_size-2]) / d[diag_size-2]
+    for il in range(diag_size - 3, -1, -1):
+        xc[il] = (results_copy[il] - xc[il + 1] * e[il] - xc[il + 2]*f[il]) / d[il]
 
     return xc
 
+
 """ Function for pivot searching """
+
+
 def search_pivot(l, epsilon, A, b):
     maxindex = abs(A[l:, l]).argmax() + l
     if abs(A[maxindex, l]) <= epsilon:
@@ -75,6 +111,8 @@ def search_pivot(l, epsilon, A, b):
 
 
 """ Gauss cu pivotare partiala """
+
+
 def partial_gauss(n, epsilon, A, b):
     for l in range(n - 1):
         # Choose pivot
@@ -91,6 +129,7 @@ def partial_gauss(n, epsilon, A, b):
             else:
                 print('Division by 0! Returning...')
                 exit(1)
+
     x = np.zeros(n)
     l = n - 1
     x[l] = b[l] / A[l, l]
@@ -101,6 +140,9 @@ def partial_gauss(n, epsilon, A, b):
     return x
 
 
+# def pivot_test_bonus(a, b, c):
+
+
 if __name__ == "__main__":
     fd = open('input', 'r')
     buf = fd.readlines()
@@ -108,7 +150,7 @@ if __name__ == "__main__":
     n = int(buf[0].strip())
     epsilon = pow(10, -int(buf[1].strip()))
 
-    A= np.zeros((n, n))
+    A = np.zeros((n, n))
     for line in range(2, n + 2):
         A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
     b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
@@ -122,22 +164,22 @@ if __name__ == "__main__":
     result_mul = matrixXvector(Acopy, my_result)
     result_sub = vectorMinusVector(result_mul, bcopy)
     norma = euclidianNorma(result_sub)
-    #euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
+    # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
     print("Verificarea:{0}".format(norma))
     inverse = np.linalg.inv(Acopy)
     print("Inversa cu numpy:{0}".format(inverse))
     result_sub = vectorMinusVector(my_result, np_result)
     norma = euclidianNorma(result_sub)
-    #euclidean_distance = distance.euclidean(my_result, np_result)
+    # euclidean_distance = distance.euclidean(my_result, np_result)
     print("Norma euclidiana intre rezultate:{0}".format(norma))
     result_mul = matrixXvector(inverse, bcopy)
     result_sub = vectorMinusVector(my_result, result_mul)
     norma = euclidianNorma(result_sub)
-    #euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
+    # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
     print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
 
-    a = [1, 2, 3]
-    b = [1, 1, 2, 2]
-    c = [7, 8, 9]
-    d = [5, 5, 5, 5]
-    #print(tri_diag_matrix_solver(a, b, c, d))
+    a = [9, -7, 8]
+    b = [1, 2]
+    c = [4, 3]
+    d = [5, 6, 2]
+    print(tri_diag_matrix_solver(a, b, c, d))
