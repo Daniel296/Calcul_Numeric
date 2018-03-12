@@ -141,42 +141,46 @@ def partial_gauss(n, epsilon, A, b):
 
 
 if __name__ == "__main__":
-    # fd = open('input', 'r')
-    # buf = fd.readlines()
-    # fd.close()
-    # n = int(buf[0].strip())
-    # epsilon = pow(10, -int(buf[1].strip()))
-    #
-    # A = np.zeros((n, n))
-    # for line in range(2, n + 2):
-    #     A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
-    # b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
-    # Acopy = deepcopy(A)
-    # bcopy = deepcopy(b)
-    #
-    # my_result = partial_gauss(n, epsilon, A, b)
-    # np_result = (np.linalg.solve(Acopy, bcopy))
-    # print("Rezultatul meu:{0}".format(my_result))
-    # print("Rezultatul cu numpy:{0}".format(np_result))
-    # result_mul = matrixXvector(Acopy, my_result)
-    # result_sub = vectorMinusVector(result_mul, bcopy)
-    # norma = euclidianNorma(result_sub)
-    # # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
-    # print("Verificarea:{0}".format(norma))
-    # inverse = np.linalg.inv(Acopy)
-    # print("Inversa cu numpy:{0}".format(inverse))
-    # result_sub = vectorMinusVector(my_result, np_result)
-    # norma = euclidianNorma(result_sub)
-    # # euclidean_distance = distance.euclidean(my_result, np_result)
-    # print("Norma euclidiana intre rezultate:{0}".format(norma))
-    # result_mul = matrixXvector(inverse, bcopy)
-    # result_sub = vectorMinusVector(my_result, result_mul)
-    # norma = euclidianNorma(result_sub)
-    # # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
-    # print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
+    fd = open('input', 'r')
+    buf = fd.readlines()
+    fd.close()
+    n = int(buf[0].strip())
+    epsilon = pow(10, -int(buf[1].strip()))
 
-    a = [9.0, -7.0, 8.0]
-    b = [1.0, 2.0]
-    c = [4.0, 3.0]
-    d = [5.0, 6.0, 2.0]
-    print(tri_diag_matrix_solver(a, b, c, d))
+    A = np.zeros((n, n))
+    for line in range(2, n + 2):
+        A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+    b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+    Acopy = deepcopy(A)
+    Acopy_2 = deepcopy(A)
+    bcopy = deepcopy(b)
+    bcopy_2 = deepcopy(b)
+
+    my_result = partial_gauss(n, epsilon, A, b)
+    np_result = (np.linalg.solve(Acopy, bcopy))
+    print("Rezultatul meu:{0}".format(my_result))
+    print("Rezultatul cu numpy:{0}".format(np_result))
+    result_mul = matrixXvector(Acopy, my_result)
+    result_sub = vectorMinusVector(result_mul, bcopy)
+    norma = euclidianNorma(result_sub)
+    # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
+    print("Verificarea:{0}".format(norma))
+    inverse = np.linalg.inv(Acopy)
+    print("Inversa cu numpy:{0}".format(inverse))
+    result_sub = vectorMinusVector(my_result, np_result)
+    norma = euclidianNorma(result_sub)
+    # euclidean_distance = distance.euclidean(my_result, np_result)
+    print("Norma euclidiana intre rezultate:{0}".format(norma))
+    result_mul = matrixXvector(inverse, bcopy)
+    result_sub = vectorMinusVector(my_result, result_mul)
+    norma = euclidianNorma(result_sub)
+    # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
+    print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
+
+
+    # For tridiag matrix
+    a = [Acopy_2[i][i] for i in range(n)]
+    b = [Acopy_2[i][i+1] for i in range(n-1)]
+    c = [Acopy_2[i+1][i] for i in range(n-1)]
+    d = deepcopy(bcopy_2)
+    print 'Tridiag matrix result: ', tri_diag_matrix_solver(a, b, c, d)
