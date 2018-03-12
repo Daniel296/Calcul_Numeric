@@ -25,35 +25,35 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QPushButton" name="Problem1">
+      <widget class="QPushButton" name="Result_2">
        <property name="text">
         <string>Result</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problem3_2">
+      <widget class="QPushButton" name="Result_tri">
        <property name="text">
         <string>Result Tridiagonal Matrix</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problem21">
+      <widget class="QPushButton" name="V1">
        <property name="text">
         <string>|| A_init * x_Gauss - b_init ||</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problem22">
+      <widget class="QPushButton" name="V2">
        <property name="text">
         <string>|| x_Gauss - x_lib ||</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Problem3">
+      <widget class="QPushButton" name="V3">
        <property name="text">
         <string>|| x_Gauss - A_lib_inv* b_init ||</string>
        </property>
@@ -121,7 +121,7 @@
      <rect>
       <x>410</x>
       <y>110</y>
-      <width>121</width>
+      <width>145</width>
       <height>41</height>
      </rect>
     </property>
@@ -135,7 +135,7 @@
         </font>
        </property>
        <property name="text">
-        <string>         Input epsilon:</string>
+        <string>        Input epsilon_pow:</string>
        </property>
       </widget>
      </item>
@@ -146,13 +146,13 @@
      <rect>
       <x>410</x>
       <y>230</y>
-      <width>127</width>
+      <width>121</width>
       <height>41</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QLabel" name="path_2">
+      <widget class="QLabel" name="n_val_6">
        <property name="font">
         <font>
          <weight>75</weight>
@@ -160,24 +160,9 @@
         </font>
        </property>
        <property name="text">
-        <string>         Input path:</string>
+        <string>        Input path:</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QWidget" name="gridLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
-      <y>230</y>
-      <width>231</width>
-      <height>73</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="1" column="0">
-      <widget class="QPlainTextEdit" name="path"/>
      </item>
     </layout>
    </widget>
@@ -192,14 +177,14 @@
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_6">
      <item>
-      <widget class="QTextEdit" name="Enunt"/>
+      <widget class="QTextEdit" name="statement"/>
      </item>
     </layout>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>90</x>
+      <x>100</x>
       <y>70</y>
       <width>251</width>
       <height>31</height>
@@ -215,41 +200,22 @@
      <string>                       STATEMENT</string>
     </property>
    </widget>
-   <widget class="QLabel" name="n_val_2">
+   <widget class="QPlainTextEdit" name="epsilon">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>170</y>
-      <width>119</width>
-      <height>39</height>
+      <x>558</x>
+      <y>110</y>
+      <width>211</width>
+      <height>41</height>
      </rect>
-    </property>
-    <property name="font">
-     <font>
-      <weight>75</weight>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>         Input n_val:</string>
     </property>
    </widget>
    <widget class="QPlainTextEdit" name="n_val">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>110</y>
-      <width>229</width>
-      <height>41</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPlainTextEdit" name="n_val_4">
-    <property name="geometry">
-     <rect>
-      <x>540</x>
+      <x>558</x>
       <y>170</y>
-      <width>229</width>
+      <width>211</width>
       <height>41</height>
      </rect>
     </property>
@@ -263,7 +229,31 @@
       <height>41</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_4"/>
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QLabel" name="n_val_5">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>        Input n:</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QPlainTextEdit" name="path">
+    <property name="geometry">
+     <rect>
+      <x>558</x>
+      <y>230</y>
+      <width>211</width>
+      <height>41</height>
+     </rect>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

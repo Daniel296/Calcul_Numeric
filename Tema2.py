@@ -1,11 +1,11 @@
+import sys
 import numpy as np
 from copy import deepcopy
 from scipy.spatial import distance
 from math import sqrt
+from PyQt4 import QtCore, QtGui, uic
 
 """ Aux functions """
-
-
 def vectorXmatrix(vector, matrix):
     if (len(vector) != len(matrix)):
         print("ERROR nr elements vector != nr lines matrix!")
@@ -19,7 +19,6 @@ def vectorXmatrix(vector, matrix):
         result.append(element)
 
     return result
-
 
 def matrixXvector(matrix, vector):
     if (len(matrix[0]) != len(vector)):
@@ -36,13 +35,11 @@ def matrixXvector(matrix, vector):
 
     return result
 
-
 def euclidianNorma(z):
     norma = 0.0
     for i in range(0, len(z)):
         norma = norma + z[i] * z[i]
     return sqrt(norma)
-
 
 def vectorMinusVector(a, b):
     result = []
@@ -50,16 +47,11 @@ def vectorMinusVector(a, b):
         result.append(a[i] - b[i])
     return result
 
-
-""" Bonus - Thomas Algorithm """
-
-
 def swap(a, b, poz_a, poz_b):
     aux = a[poz_a]
     a[poz_a] = b[poz_b]
     b[poz_b] = aux
     return a, b
-
 
 def tri_diag_matrix_solver(a, b, c, results):
     diag_size = len(a)  # number of equations
@@ -94,8 +86,6 @@ def tri_diag_matrix_solver(a, b, c, results):
 
 
 """ Function for pivot searching """
-
-
 def search_pivot(l, epsilon, A, b):
     maxindex = abs(A[l:, l]).argmax() + l
     if abs(A[maxindex, l]) <= epsilon:
@@ -108,8 +98,6 @@ def search_pivot(l, epsilon, A, b):
 
 
 """ Gauss cu pivotare partiala """
-
-
 def partial_gauss(n, epsilon, A, b):
     for l in range(n - 1):
         # Choose pivot
@@ -136,51 +124,136 @@ def partial_gauss(n, epsilon, A, b):
 
     return x
 
+""" UI Part """
+qtCreatorFile = "D:\work\Anul3\SEM2\CN\GIT\Calcul_Numeric\Main_Frame2.ui"
 
-# def pivot_test_bonus(a, b, c):
+Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
 
+class MyApp(QtGui.QMainWindow, Ui_MainWindow):
+
+    def __init__(self):
+        super(MyApp, self).__init__()
+        self.ui = Ui_MainWindow()
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.ui.Result_2.clicked.connect(self.Problema1)
+        self.ui.Result_tri.clicked.connect(self.Problema2)
+        self.ui.V1.clicked.connect(self.Verificare1)
+        self.ui.V2.clicked.connect(self.Verificare2)
+        self.ui.V3.clicked.connect(self.Verificare3)
+
+    def Problema1(self):
+        self.ui.statement.setText("Sa se aproximeze solutia ecuatiei: Ax = b, folosindu-se Gauss cu pivotare partiala si metoda substitutiei inverse.\n")
+        n = int(self.ui.n_val.toPlainText())
+        path = self.ui.path.toPlainText()
+        epsilon = self.ui.epsilon.toPlainText()
+        epsilon = pow(10, (-1)*int(epsilon))
+        fd = open(path, 'r')
+        buf = fd.readlines()
+        fd.close()
+        A = np.zeros((n, n))
+        for line in range(0, n):
+            A[line] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+        b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+        my_result = partial_gauss(n, epsilon, A, b)
+        matrix = ''
+        for i in range(0, len(my_result)):
+            matrix += str(format(my_result[i], '.2f'))
+            matrix += " "
+        self.ui.Result.setText(matrix)
+
+    def Problema2(self):
+        self.ui.statement.setText("Sa se aproximeze solutia ecuatiei: Ax= b, folosindu-se Gauss cu pivotare partiala, adaptat pentru matrici tridiagonale.\n")
+        n = int(self.ui.n_val.toPlainText())
+        path = self.ui.path.toPlainText()
+        epsilon = self.ui.epsilon.toPlainText()
+        epsilon = pow(10, (-1) * int(epsilon))
+        fd = open(path, 'r')
+        buf = fd.readlines()
+        fd.close()
+        A = np.zeros((n, n))
+        for line in range(0, n):
+            A[line] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+        b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+        Acopy_2 = deepcopy(A)
+        bcopy_2 = deepcopy(b)
+        a = [Acopy_2[i][i] for i in range(n)]
+        b = [Acopy_2[i][i + 1] for i in range(n - 1)]
+        c = [Acopy_2[i + 1][i] for i in range(n - 1)]
+        d = deepcopy(bcopy_2)
+        my_result = tri_diag_matrix_solver(a, b, c, d)
+        matrix = ''
+        for i in range(0, len(my_result)):
+            matrix += str(format(my_result[i], '.2f'))
+            matrix += " "
+        self.ui.Result.setText(matrix)
+
+    def Verificare1(self):
+        self.ui.statement.setText("Sa se afiseze, spre verificare: || A_init * x_Gauss - b_init ||.\n")
+        n = int(self.ui.n_val.toPlainText())
+        path = self.ui.path.toPlainText()
+        epsilon = self.ui.epsilon.toPlainText()
+        epsilon = pow(10, (-1) * int(epsilon))
+        fd = open(path, 'r')
+        buf = fd.readlines()
+        fd.close()
+        A = np.zeros((n, n))
+        for line in range(0, n):
+            A[line] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+        b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+        Acopy = deepcopy(A)
+        bcopy = deepcopy(b)
+        my_result = partial_gauss(n, epsilon, A, b)
+        result_mul = matrixXvector(Acopy, my_result)
+        result_sub = vectorMinusVector(result_mul, bcopy)
+        norma = euclidianNorma(result_sub)
+        self.ui.Result.setText(str(norma))
+
+    def Verificare2(self):
+        self.ui.statement.setText("Sa se afiseze, spre verificare: || x_Gauss - x_lib ||.\n")
+        n = int(self.ui.n_val.toPlainText())
+        path = self.ui.path.toPlainText()
+        epsilon = self.ui.epsilon.toPlainText()
+        epsilon = pow(10, (-1) * int(epsilon))
+        fd = open(path, 'r')
+        buf = fd.readlines()
+        fd.close()
+        A = np.zeros((n, n))
+        for line in range(0, n):
+            A[line] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+        b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+        Acopy = deepcopy(A)
+        bcopy = deepcopy(b)
+        my_result = partial_gauss(n, epsilon, A, b)
+        np_result = (np.linalg.solve(Acopy, bcopy))
+        result_sub = vectorMinusVector(my_result, np_result)
+        norma = euclidianNorma(result_sub)
+        self.ui.Result.setText(str(norma))
+
+    def Verificare3(self):
+        self.ui.statement.setText("Sa se afiseze, spre verificare: || x_Gauss - A_lib_inv* b_init ||.\n")
+        n = int(self.ui.n_val.toPlainText())
+        path = self.ui.path.toPlainText()
+        epsilon = self.ui.epsilon.toPlainText()
+        epsilon = pow(10, (-1) * int(epsilon))
+        fd = open(path, 'r')
+        buf = fd.readlines()
+        fd.close()
+        A = np.zeros((n, n))
+        for line in range(0, n):
+            A[line] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+        b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+        Acopy = deepcopy(A)
+        bcopy = deepcopy(b)
+        my_result = partial_gauss(n, epsilon, A, b)
+        inverse = np.linalg.inv(Acopy)
+        result_mul = matrixXvector(inverse, bcopy)
+        result_sub = vectorMinusVector(my_result, result_mul)
+        norma = euclidianNorma(result_sub)
+        self.ui.Result.setText(str(norma))
 
 if __name__ == "__main__":
-    fd = open('input', 'r')
-    buf = fd.readlines()
-    fd.close()
-    n = int(buf[0].strip())
-    epsilon = pow(10, -int(buf[1].strip()))
-
-    A = np.zeros((n, n))
-    for line in range(2, n + 2):
-        A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
-    b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
-    Acopy = deepcopy(A)
-    Acopy_2 = deepcopy(A)
-    bcopy = deepcopy(b)
-    bcopy_2 = deepcopy(b)
-
-    my_result = partial_gauss(n, epsilon, A, b)
-    np_result = (np.linalg.solve(Acopy, bcopy))
-    print("Rezultatul meu:{0}".format(my_result))
-    print("Rezultatul cu numpy:{0}".format(np_result))
-    result_mul = matrixXvector(Acopy, my_result)
-    result_sub = vectorMinusVector(result_mul, bcopy)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
-    print("Verificarea:{0}".format(norma))
-    inverse = np.linalg.inv(Acopy)
-    print("Inversa cu numpy:{0}".format(inverse))
-    result_sub = vectorMinusVector(my_result, np_result)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(my_result, np_result)
-    print("Norma euclidiana intre rezultate:{0}".format(norma))
-    result_mul = matrixXvector(inverse, bcopy)
-    result_sub = vectorMinusVector(my_result, result_mul)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
-    print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
-
-
-    # For tridiag matrix
-    a = [Acopy_2[i][i] for i in range(n)]
-    b = [Acopy_2[i][i+1] for i in range(n-1)]
-    c = [Acopy_2[i+1][i] for i in range(n-1)]
-    d = deepcopy(bcopy_2)
-    print 'Tridiag matrix result: ', tri_diag_matrix_solver(a, b, c, d)
+    app = QtGui.QApplication(sys.argv)
+    window = MyApp()
+    window.show()
+    sys.exit(app.exec_())
