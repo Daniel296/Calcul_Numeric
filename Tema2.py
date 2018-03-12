@@ -64,34 +64,31 @@ def swap(a, b, poz_a, poz_b):
 def tri_diag_matrix_solver(a, b, c, results):
     diag_size = len(a)  # number of equations
     d, e, cc, results_copy = map(np.array, (a, b, c, results))  # copy arrays
-    f = np.zeros(n - 1)
-    print 0,d,e,cc, f, results_copy
+    f = np.zeros(diag_size - 1)
     for it in range(0, diag_size - 1):
         if d[it] < cc[it]:
             d, cc = swap(d, cc, it, it)
-            d, e = swap(d, e, it + 1, it)
+            if it < diag_size - 1:
+                d, e = swap(d, e, it + 1, it)
             if it < diag_size - 2:
                 e, f = swap(e, f, it + 1, it)
-            aux = results_copy[it]
+            aux = float(results_copy[it])
             results_copy[it] = results_copy[it + 1]
             results_copy[it + 1] = aux
 
-        if it > 0:
-            d[it] = (-1 * d[it - 1] / cc[it - 1]) * d[it] + e[it - 1]
-            e[it] = (-1 * d[it - 1] / cc[it - 1]) * e[it] + f[it - 1]
-            f[it] *= (-1 * d[it - 1] / cc[it - 1])
-            results_copy[it] = results_copy[it - 1] + results_copy[it]*(-1 * d[it - 1] / cc[it - 1])
-
-        print it + 1, d, e, cc, f, results_copy
-
-
-    print e, d, f, results_copy
+        temp = (-1 * d[it] / cc[it])
+        d[it + 1] = temp * d[it + 1] + e[it]
+        if it < diag_size - 2:
+            e[it + 1] = temp * e[it + 1] + f[it]
+        if it < diag_size - 3:
+            f[it] *= temp
+        results_copy[it + 1] = results_copy[it] + results_copy[it + 1] * temp
 
     xc = np.zeros(diag_size)
-    xc[diag_size-1] = results_copy[diag_size-1]/d[diag_size-1]
-    xc[diag_size-2] = (results_copy[diag_size-2] - xc[diag_size-1] * e[diag_size-2]) / d[diag_size-2]
+    xc[diag_size - 1] = results_copy[diag_size - 1] / d[diag_size - 1]
+    xc[diag_size - 2] = (results_copy[diag_size - 2] - xc[diag_size - 1] * e[diag_size - 2]) / d[diag_size - 2]
     for il in range(diag_size - 3, -1, -1):
-        xc[il] = (results_copy[il] - xc[il + 1] * e[il] - xc[il + 2]*f[il]) / d[il]
+        xc[il] = (results_copy[il] - xc[il + 1] * e[il] - xc[il + 2] * f[il]) / d[il]
 
     return xc
 
@@ -144,42 +141,42 @@ def partial_gauss(n, epsilon, A, b):
 
 
 if __name__ == "__main__":
-    fd = open('input', 'r')
-    buf = fd.readlines()
-    fd.close()
-    n = int(buf[0].strip())
-    epsilon = pow(10, -int(buf[1].strip()))
+    # fd = open('input', 'r')
+    # buf = fd.readlines()
+    # fd.close()
+    # n = int(buf[0].strip())
+    # epsilon = pow(10, -int(buf[1].strip()))
+    #
+    # A = np.zeros((n, n))
+    # for line in range(2, n + 2):
+    #     A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
+    # b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
+    # Acopy = deepcopy(A)
+    # bcopy = deepcopy(b)
+    #
+    # my_result = partial_gauss(n, epsilon, A, b)
+    # np_result = (np.linalg.solve(Acopy, bcopy))
+    # print("Rezultatul meu:{0}".format(my_result))
+    # print("Rezultatul cu numpy:{0}".format(np_result))
+    # result_mul = matrixXvector(Acopy, my_result)
+    # result_sub = vectorMinusVector(result_mul, bcopy)
+    # norma = euclidianNorma(result_sub)
+    # # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
+    # print("Verificarea:{0}".format(norma))
+    # inverse = np.linalg.inv(Acopy)
+    # print("Inversa cu numpy:{0}".format(inverse))
+    # result_sub = vectorMinusVector(my_result, np_result)
+    # norma = euclidianNorma(result_sub)
+    # # euclidean_distance = distance.euclidean(my_result, np_result)
+    # print("Norma euclidiana intre rezultate:{0}".format(norma))
+    # result_mul = matrixXvector(inverse, bcopy)
+    # result_sub = vectorMinusVector(my_result, result_mul)
+    # norma = euclidianNorma(result_sub)
+    # # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
+    # print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
 
-    A = np.zeros((n, n))
-    for line in range(2, n + 2):
-        A[line - 2] = np.array([float(i.strip()) for i in buf[line].split(' ')])
-    b = np.array([float(i.strip()) for i in buf[-1].split(' ')])
-    Acopy = deepcopy(A)
-    bcopy = deepcopy(b)
-
-    my_result = partial_gauss(n, epsilon, A, b)
-    np_result = (np.linalg.solve(Acopy, bcopy))
-    print("Rezultatul meu:{0}".format(my_result))
-    print("Rezultatul cu numpy:{0}".format(np_result))
-    result_mul = matrixXvector(Acopy, my_result)
-    result_sub = vectorMinusVector(result_mul, bcopy)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(np.dot(Acopy, my_result), bcopy)
-    print("Verificarea:{0}".format(norma))
-    inverse = np.linalg.inv(Acopy)
-    print("Inversa cu numpy:{0}".format(inverse))
-    result_sub = vectorMinusVector(my_result, np_result)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(my_result, np_result)
-    print("Norma euclidiana intre rezultate:{0}".format(norma))
-    result_mul = matrixXvector(inverse, bcopy)
-    result_sub = vectorMinusVector(my_result, result_mul)
-    norma = euclidianNorma(result_sub)
-    # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
-    print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
-
-    a = [9, -7, 8]
-    b = [1, 2]
-    c = [4, 3]
-    d = [5, 6, 2]
+    a = [9.0, -7.0, 8.0]
+    b = [1.0, 2.0]
+    c = [4.0, 3.0]
+    d = [5.0, 6.0, 2.0]
     print(tri_diag_matrix_solver(a, b, c, d))
