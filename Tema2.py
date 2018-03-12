@@ -73,7 +73,7 @@ def tri_diag_matrix_solver(a, b, c, results):
             if it < diag_size - 2:
                 e, f = swap(e, f, it + 1, it)
             aux = float(results_copy[it])
-            results_copy[it] = results_copy[it + 1]
+            results_copy[it] = float(results_copy[it + 1])
             results_copy[it + 1] = aux
 
         temp = (-1 * d[it] / cc[it])
@@ -81,7 +81,7 @@ def tri_diag_matrix_solver(a, b, c, results):
         if it < diag_size - 2:
             e[it + 1] = temp * e[it + 1] + f[it]
         if it < diag_size - 3:
-            f[it] *= temp
+            f[it + 1] = f[it + 1] * temp
         results_copy[it + 1] = results_copy[it] + results_copy[it + 1] * temp
 
     xc = np.zeros(diag_size)
@@ -177,10 +177,9 @@ if __name__ == "__main__":
     # euclidean_distance = distance.euclidean(my_result, np.dot(inverse, bcopy))
     print("Norma euclidiana intre my_result si rezultatul asteptat:{0}".format(norma))
 
-
     # For tridiag matrix
     a = [Acopy_2[i][i] for i in range(n)]
-    b = [Acopy_2[i][i+1] for i in range(n-1)]
-    c = [Acopy_2[i+1][i] for i in range(n-1)]
+    b = [Acopy_2[i][i + 1] for i in range(n - 1)]
+    c = [Acopy_2[i + 1][i] for i in range(n - 1)]
     d = deepcopy(bcopy_2)
-    print 'Tridiag matrix result: ', tri_diag_matrix_solver(a, b, c, d)
+    print 'Tridiag matrix solution: ', tri_diag_matrix_solver(a, b, c, d)
