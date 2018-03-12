@@ -65,7 +65,7 @@ def tri_diag_matrix_solver(a, b, c, results):
             if it < diag_size - 2:
                 e, f = swap(e, f, it + 1, it)
             aux = float(results_copy[it])
-            results_copy[it] = results_copy[it + 1]
+            results_copy[it] = float(results_copy[it + 1])
             results_copy[it + 1] = aux
 
         temp = (-1 * d[it] / cc[it])
@@ -73,7 +73,7 @@ def tri_diag_matrix_solver(a, b, c, results):
         if it < diag_size - 2:
             e[it + 1] = temp * e[it + 1] + f[it]
         if it < diag_size - 3:
-            f[it] *= temp
+            f[it + 1] = f[it + 1] * temp
         results_copy[it + 1] = results_copy[it] + results_copy[it + 1] * temp
 
     xc = np.zeros(diag_size)
