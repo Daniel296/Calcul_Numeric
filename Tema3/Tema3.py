@@ -1,5 +1,3 @@
-import sys
-
 EPS = pow(10, -7)
 
 def getSize(vector):
@@ -34,12 +32,13 @@ def readFromFile(file_path, limit_line):
         if len(A[line_index]) > 0:
             for pair in A[line_index]:
                 """ If I have an element on the same position as another one, I add the two values """
-                if column_index in pair:
-                    #print("Exists on column " + str(column_index) + "value: " + str(value))
+                if column_index == pair[1]:
+                    #print("I am on row " + str(line_index) + "col: " + str(column_index) + "val: " + str(value))
+                    #print("Exists on column " + str(pair[1]) + "line: " + str(line_index) + "value: " + str(pair[0]))
                     already_exist = True
                     break
         if already_exist == True:
-            #print("Added " + str(pair[0]) + " to " + str(value))
+            #print("Added " + str(value) + " to " + str(pair[0]))
             pair[0] += value
         else:
             """ If I already have 10 not null elements on that line """
@@ -72,7 +71,7 @@ def isEqualMM(matrix_1, matrix_2):
             col_1 = pair[1]
             found_col_1 = False
             for pair_2 in matrix_2[line_index]:
-                if col_1 in pair_2:
+                if col_1 == pair_2[1]:
                     found_col_1 = True
                     if pair_2[0] - value_1 > EPS:
                         return False
@@ -127,7 +126,7 @@ def main():
     x = [matrix_size - i for i in range(2018)]
     result = mulMatrixVector(A, x)
     """ Check that Matrix*Vector multiplication is equal to b vector """
-    #print(isEqualVV(result, b))
+    print(isEqualVV(result, b))
     """ Check that A_a + A_b is equal to matrix from aplusb.txt """
     matrix_size_b, A_b, b_b = readFromFile('b.txt', 10)
     AplusB_size, AplusB_matrix, AplusB_vector = readFromFile('aplusb.txt', 20)
