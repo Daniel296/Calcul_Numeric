@@ -63,11 +63,12 @@ def Gauss_Siedel(A, b):
     while True:
         delta, xGS = getNewX(A, b, xGS)
         k += 1
+        print("Delta: {0}".format(delta))
+        print("k: {0}".format(k))
         if (delta < EPS or k > MAX_K or delta > MAX_DELTA):
             break
     if delta < EPS:
-        result = mulMatrixVector(A, xGS)
-        print(euclideanNorm(subMatrices(result, b)))
+        return True, xGS
     else:
         return False
 
@@ -115,8 +116,11 @@ def readFromFile(file_path):
 
 def main():
     matrix_size, A, b = readFromFile("m_rar_2018_5.txt")
-    if (Gauss_Siedel(A, b)):
+    convergent, xGS = Gauss_Siedel(A, b)
+    if (convergent):
         print("Convergent!\n")
+        result = mulMatrixVector(A, xGS)
+        print(euclideanNorm(subMatrices(result, b)))
     else:
         print("Divergent!\n")
 
