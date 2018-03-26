@@ -1,6 +1,75 @@
+from math import sqrt
 
 EPS = pow(10, -7)
+MAX_K = 10000
+MAX_DELTA = pow(10, 8)
 
+def euclideanNorm(Z):
+    norm = 0.0
+    for index_vector in range(0, len(Z)):
+        norm = norm + Z[index_vector] * Z[index_vector]
+    return sqrt(norm)
+
+def subMatrices(A, B):
+    result = [];
+    for index_vector in range(len(A)):
+        result.append(A[index_vector] - B[index_vector]);
+    return result;
+
+def mulMatrixVector(A, vector):
+    matrix_size = len(A)
+    """ Initialize the result matrix """
+    result = [0 for _ in range(matrix_size)]
+
+    """ For each row, multiply the not null elements with the corresponding elements in the vector """
+    for line_index in range(matrix_size):
+        total_mul_line = 0
+        for pair in A[line_index]:
+            value = pair[0]
+            column_index = pair[1]
+            total_mul_line += value * vector[column_index]
+        result[line_index] = total_mul_line
+
+    return result
+
+def getValue(A, line, column):
+    for index_vector in range(len((A[line]))):
+        if A[line][index_vector][1] == column:
+            return A[line][index_vector][0];
+    return -200000
+
+def getNewX(A, b, xGS):
+    delta = 0
+    for line_index in range(len(b)):
+        sum_bellow_diagonal = 0
+        sum_above_diagonal = 0
+        for col_index in range(line_index):
+            temp_val = getValue(A, line_index, col_index)
+            if temp_val != -200000:
+                sum_bellow_diagonal += temp_val * xGS[col_index]
+        for col_index in range(line_index + 1, len(b)):
+            temp_val = getValue(A, line_index, col_index)
+            if temp_val != -200000:
+                sum_above_diagonal += temp_val * xGS[col_index]
+        delta += pow(((b[line_index] - sum_bellow_diagonal - sum_above_diagonal)/getValue(A, line_index, line_index)) - xGS[line_index], 2)
+        xGS[line_index] = (b[line_index] - sum_bellow_diagonal - sum_above_diagonal)/getValue(A, line_index, line_index)
+    return sqrt(delta), xGS
+
+def Gauss_Siedel(A, b):
+    xGS = []
+    k = 0
+    for index_vector in range(len(b)):
+        xGS.append(0.0)
+    while True:
+        delta, xGS = getNewX(A, b, xGS)
+        k += 1
+        if (delta < EPS or k > MAX_K or delta > MAX_DELTA):
+            break
+    if delta < EPS:
+        result = mulMatrixVector(A, xGS)
+        print(euclideanNorm(subMatrices(result, b)))
+    else:
+        return False
 
 def readFromFile(file_path):
     fd = open(file_path, 'rb')
@@ -34,7 +103,7 @@ def readFromFile(file_path):
                     already_exist = True
                     break
                 if column_index == line_index:
-                    if value == 0:
+                    if abs(value) < EPS:
                         print("Value 0 found on diagonal, for column index equal to: {0} and line index equal to: {1}".format(line_index, column_index))
                         exit(0)
         if already_exist == True:
@@ -46,6 +115,10 @@ def readFromFile(file_path):
 
 def main():
     matrix_size, A, b = readFromFile("m_rar_2018_5.txt")
+    if (Gauss_Siedel(A, b)):
+        print("Convergent!\n")
+    else:
+        print("Divergent!\n")
 
 if __name__ == '__main__':
     main()
