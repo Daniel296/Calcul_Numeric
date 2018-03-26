@@ -1,14 +1,8 @@
-from math import sqrt
+import numpy as np
 
-EPS = pow(10, -7)
+EPS = pow(10, -5)
 MAX_K = 10000
 MAX_DELTA = pow(10, 8)
-
-def euclideanNorm(Z):
-    norm = 0.0
-    for index_vector in range(0, len(Z)):
-        norm = norm + Z[index_vector] * Z[index_vector]
-    return sqrt(norm)
 
 def subMatrices(A, B):
     result = [];
@@ -32,45 +26,68 @@ def mulMatrixVector(A, vector):
 
     return result
 
+def verifyMatrix(A):
+    for line in range(len(A)):
+        foundInLine = False
+        for column in range(len(A[line])):
+            """ If the line is equal to the column """
+            if A[line][column][1] == line:
+                foundInLine = True
+                if abs(A[line][column][0]) < EPS:
+                    print("Can not apply Gauss_Siedel!\n")
+                    return False
+        if foundInLine == False:
+            print("Can not apply Gauss_Siedel!\n")
+            return False
+    return True
+
 def getValue(A, line, column):
     for index_vector in range(len((A[line]))):
         if A[line][index_vector][1] == column:
             return A[line][index_vector][0];
     return -200000
 
-def getNewX(A, b, xGS):
-    delta = 0
-    for line_index in range(len(b)):
-        sum_bellow_diagonal = 0
-        sum_above_diagonal = 0
-        for col_index in range(line_index):
-            temp_val = getValue(A, line_index, col_index)
-            if temp_val != -200000:
-                sum_bellow_diagonal += temp_val * xGS[col_index]
-        for col_index in range(line_index + 1, len(b)):
-            temp_val = getValue(A, line_index, col_index)
-            if temp_val != -200000:
-                sum_above_diagonal += temp_val * xGS[col_index]
-        delta += pow(((b[line_index] - sum_bellow_diagonal - sum_above_diagonal)/getValue(A, line_index, line_index)) - xGS[line_index], 2)
-        xGS[line_index] = (b[line_index] - sum_bellow_diagonal - sum_above_diagonal)/getValue(A, line_index, line_index)
-    return sqrt(delta), xGS
+def Gauss_Siedel(matrice, b, matrix_size):
+    xgs = []
+    for index_line in range(matrix_size):
+        xgs.append(0.0)
 
-def Gauss_Siedel(A, b):
-    xGS = []
-    k = 0
-    for index_vector in range(len(b)):
-        xGS.append(0.0)
-    while True:
-        delta, xGS = getNewX(A, b, xGS)
-        k += 1
-        print("Delta: {0}".format(delta))
-        print("k: {0}".format(k))
-        if (delta < EPS or k > MAX_K or delta > MAX_DELTA):
+    """ For each iteration """
+    for k in range(MAX_K):
+        is_conv = 1
+        is_div = 1
+        """ For each line """
+        for index_line in range(matrix_size):
+            suma_bellow_diagonal = 0
+            suma_above_diagonal = 0
+            contor = 0
+            """ Get the two sums """
+            while contor < len(matrice[index_line]) and  matrice[index_line][contor][1] < index_line:
+                suma_bellow_diagonal += matrice[index_line][contor][0] * xgs[matrice[index_line][contor][1]]
+                contor += 1
+            contor += 1
+            while contor < len(matrice[index_line]) and matrice[index_line][contor][1] < matrix_size:
+                suma_above_diagonal += matrice[index_line][contor][0] * xgs[matrice[index_line][contor][1]]
+                contor += 1
+            """ Get the value of the element """
+            elem = (b[index_line] - suma_bellow_diagonal - suma_above_diagonal) / getValue(matrice, index_line, index_line)
+            """ Check if the ending conditions are met """
+            if abs(xgs[index_line] - elem) >= EPS:
+                is_conv = 0
+            if abs(xgs[index_line] - elem) <= pow(10, 8):
+                is_div = 0
+            """ Update the value of the current element in the vector """
+            xgs[index_line] = elem
+        if is_conv or is_div:
             break
-    if delta < EPS:
-        return True, xGS
+    if is_conv and k != MAX_K - 1:
+        print("Iteratia:{0} ".format(k))
+        print("Convergent!\n")
+        return xgs
     else:
-        return False
+        print("Iteratia:{0} ".format(k))
+        print("Divergent!\n")
+        return None
 
 def readFromFile(file_path):
     fd = open(file_path, 'rb')
@@ -103,26 +120,24 @@ def readFromFile(file_path):
                 if column_index == pair[1]:
                     already_exist = True
                     break
-                if column_index == line_index:
-                    if abs(value) < EPS:
-                        print("Value 0 found on diagonal, for column index equal to: {0} and line index equal to: {1}".format(line_index, column_index))
-                        exit(0)
         if already_exist == True:
             pair[0] += value
         else:
+            if len(A[line_index]) == 10:
+                print("Dimension of matrix exceeded!\n")
+                exit(1)
             A[line_index].append([value, column_index])
 
     return matrix_size, A, b
 
 def main():
-    matrix_size, A, b = readFromFile("m_rar_2018_5.txt")
-    convergent, xGS = Gauss_Siedel(A, b)
-    if (convergent):
-        print("Convergent!\n")
-        result = mulMatrixVector(A, xGS)
-        print(euclideanNorm(subMatrices(result, b)))
-    else:
-        print("Divergent!\n")
+    matrix_size, A, b = readFromFile("m_rar_2018_4.txt")
+    if verifyMatrix(A):
+        for line_index in range(matrix_size):
+            A[line_index].sort(key=lambda x: x[1])
+        result = Gauss_Siedel(A, b, matrix_size)
+        if result!= None:
+            print("Norma: {0}".format(np.linalg.norm((subMatrices(mulMatrixVector(A, result), b)), np.inf)))
 
 if __name__ == '__main__':
     main()
