@@ -42,9 +42,10 @@ def readFromFile(file_path, limit_line):
             pair[0] += value
         else:
             """ If I already have 10 not null elements on that line """
-            if len(A[line_index]) == limit_line:
-                print("Dimension of matrix exceeded!\n")
-                exit(1)
+            if limit_line != 0:
+                if len(A[line_index]) == limit_line:
+                    print("Dimension of matrix exceeded!\n")
+                    exit(1)
             """ Else """
             A[line_index].append([value, column_index])
 
@@ -95,6 +96,34 @@ def mulMatrixVector(A, vector):
 
     return result
 
+def mulMatrixMartix(matrix_1, matrix_2):
+
+    matrix_size = len(matrix_1)
+    """ Initialize the result matrix """
+    result = [[] for _ in range(matrix_size)]
+
+    """ For each line in the matrix """
+    for line_index in range(matrix_size):
+        """ For each of the columns in the second matrix """
+        for col_index in range(matrix_size):
+            temp_total = 0
+            """ For each element from that line """
+            for pair_1 in matrix_1[line_index]:
+                value = pair_1[0]
+                col_index = pair_1[1]
+                """ Take the corresponding line in the second matrix = the column in the first matrix """
+                for pair_2 in matrix_2[col_index]:
+                    value_2 = pair_2[0]
+                    col_index_2 = pair_2[1]
+                    if col_index_2 == col_index:
+                        temp_total += value_2 * value
+                        break
+
+            if temp_total > EPS:
+                result[line_index].append([temp_total, col_index])
+
+    return result
+
 def sumMatrixMatrix(A, B):
     matrix_size = len(A)
     """ Initialize the result matrix """
@@ -126,12 +155,27 @@ def main():
     x = [matrix_size - i for i in range(2018)]
     result = mulMatrixVector(A, x)
     """ Check that Matrix*Vector multiplication is equal to b vector """
-    print(isEqualVV(result, b))
+    if isEqualVV(result, b):
+        print("A * x == b\n")
+    else:
+        print("A * x != b\n")
+
     """ Check that A_a + A_b is equal to matrix from aplusb.txt """
     matrix_size_b, A_b, b_b = readFromFile('b.txt', 10)
     AplusB_size, AplusB_matrix, AplusB_vector = readFromFile('aplusb.txt', 20)
     result = sumMatrixMatrix(A, A_b)
-    print(isEqualMM(result, AplusB_matrix))
+    if isEqualMM(result, AplusB_matrix):
+        print("A_a + A_b == AplusB\n")
+    else:
+        print("A_a + A_b == AplusB\n")
+
+    """ Check that A_a * A_b is equal to matrix from aorib.txt """
+    AoriB_size, AoriB_matrix, AoriB_vector = readFromFile('aorib.txt', 0)
+    result = mulMatrixMartix(A, A_b)
+    if isEqualMM(result, AoriB_matrix):
+        print("A_a * A_b == AoriB\n")
+    else:
+        print("A_a * A_b == AoriB\n")
 
 if __name__ == '__main__':
     main()
