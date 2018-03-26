@@ -48,9 +48,9 @@ def getValue(A, line, column):
     return -200000
 
 def Gauss_Siedel(matrice, b, matrix_size):
-    xgs = []
+    xGS = []
     for index_line in range(matrix_size):
-        xgs.append(0.0)
+        xGS.append(0.0)
 
     """ For each iteration """
     for k in range(MAX_K):
@@ -63,27 +63,27 @@ def Gauss_Siedel(matrice, b, matrix_size):
             contor = 0
             """ Get the two sums """
             while contor < len(matrice[index_line]) and  matrice[index_line][contor][1] < index_line:
-                suma_bellow_diagonal += matrice[index_line][contor][0] * xgs[matrice[index_line][contor][1]]
+                suma_bellow_diagonal += matrice[index_line][contor][0] * xGS[matrice[index_line][contor][1]]
                 contor += 1
             contor += 1
             while contor < len(matrice[index_line]) and matrice[index_line][contor][1] < matrix_size:
-                suma_above_diagonal += matrice[index_line][contor][0] * xgs[matrice[index_line][contor][1]]
+                suma_above_diagonal += matrice[index_line][contor][0] * xGS[matrice[index_line][contor][1]]
                 contor += 1
             """ Get the value of the element """
             elem = (b[index_line] - suma_bellow_diagonal - suma_above_diagonal) / getValue(matrice, index_line, index_line)
             """ Check if the ending conditions are met """
-            if abs(xgs[index_line] - elem) >= EPS:
+            if abs(xGS[index_line] - elem) >= EPS:
                 is_conv = 0
-            if abs(xgs[index_line] - elem) <= pow(10, 8):
+            if abs(xGS[index_line] - elem) <= pow(10, 8):
                 is_div = 0
             """ Update the value of the current element in the vector """
-            xgs[index_line] = elem
+            xGS[index_line] = elem
         if is_conv or is_div:
             break
     if is_conv and k != MAX_K - 1:
         print("Iteratia:{0} ".format(k))
         print("Convergent!\n")
-        return xgs
+        return xGS
     else:
         print("Iteratia:{0} ".format(k))
         print("Divergent!\n")
