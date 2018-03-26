@@ -1,3 +1,5 @@
+import time
+
 EPS = pow(10, -7)
 
 def getSize(vector):
@@ -153,29 +155,38 @@ def sumMatrixMatrix(A, B):
 def main():
     matrix_size, A, b = readFromFile('a.txt', 10)
     x = [matrix_size - i for i in range(2018)]
+    start = time.time()
     result = mulMatrixVector(A, x)
     """ Check that Matrix*Vector multiplication is equal to b vector """
     if isEqualVV(result, b):
-        print("A * x == b\n")
+        print("A * x == b")
     else:
-        print("A * x != b\n")
+        print("A * x != b")
+    end = time.time()
+    print("Time elapsed for multiplication Matrix*Vector: " + str(end - start) + "\n")
 
     """ Check that A_a + A_b is equal to matrix from aplusb.txt """
     matrix_size_b, A_b, b_b = readFromFile('b.txt', 10)
     AplusB_size, AplusB_matrix, AplusB_vector = readFromFile('aplusb.txt', 20)
+    start = time.time()
     result = sumMatrixMatrix(A, A_b)
     if isEqualMM(result, AplusB_matrix):
-        print("A_a + A_b == AplusB\n")
+        print("A_a + A_b == AplusB")
     else:
-        print("A_a + A_b == AplusB\n")
+        print("A_a + A_b == AplusB")
+    end = time.time()
+    print("Time elapsed for sum: " + str(end - start) + "\n")
 
     """ Check that A_a * A_b is equal to matrix from aorib.txt """
     AoriB_size, AoriB_matrix, AoriB_vector = readFromFile('aorib.txt', 0)
+    start = time.time()
     result = mulMatrixMartix(A, A_b)
     if isEqualMM(result, AoriB_matrix):
-        print("A_a * A_b == AoriB\n")
+        print("A_a * A_b == AoriB")
     else:
-        print("A_a * A_b == AoriB\n")
+        print("A_a * A_b == AoriB")
+    end = time.time()
+    print("Time elapsed for multiplication Matrix*Matrix: " + str(end - start) + "\n")
 
 if __name__ == '__main__':
     main()
