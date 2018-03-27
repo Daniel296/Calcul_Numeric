@@ -130,6 +130,42 @@ def readFromFile(file_path):
 
     return matrix_size, A, b
 
+def multiply(A, x):
+    return_vector = []
+    for i in range(len(x)):
+        temp_result = 0
+        for index_vector in range(len(A[i])):
+            temp_result += x[A[i][index_vector][1]] * A[i][index_vector][0]
+        return_vector.append(temp_result)
+
+    return np.array(return_vector)
+
+def conjugate_gradient_method(A, b):
+    x = []
+    b = np.array(b)
+    for i in range(len(b)):
+        x.append(0.0)
+    x = [x]
+    r = []
+    p = []
+    r.append(b - multiply(A, x[0]))
+    p.append(b - multiply(A, x[0]))
+    k = 0
+    while k < MAX_K:
+        # print k
+        Ap = multiply(A, p[k])
+        alpha = r[k].transpose().dot(r[k])
+        alpha /= p[k].transpose().dot(Ap)
+        x.append(x[k] + alpha * p[k])
+        r.append(r[k] - alpha * Ap)
+        if abs(r[k + 1].transpose().dot(r[k + 1])) < EPS:
+            return x[k + 1]
+        beta = r[k + 1].transpose().dot(r[k + 1])
+        beta /= r[k].transpose().dot(r[k])
+        p.append(r[k + 1] + beta * p[k])
+        k += 1
+    return x[k]
+
 def main():
     matrix_size, A, b = readFromFile("m_rar_2018_4.txt")
     if verifyMatrix(A):
@@ -138,6 +174,10 @@ def main():
         result = Gauss_Siedel(A, b, matrix_size)
         if result!= None:
             print("Norma: {0}".format(np.linalg.norm((subMatrices(mulMatrixVector(A, result), b)), np.inf)))
+    """matrix_size, A, b = readFromFile(r"D:\work\Anul3\SEM2\CN\GIT\Calcul_Numeric\Tema4\bonus.txt")
+    x = conjugate_gradient_method(A, b)
+    print(x)
+    print(np.linalg.norm(multiply(A, x) - b, np.inf))"""
 
 if __name__ == '__main__':
     main()
