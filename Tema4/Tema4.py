@@ -75,6 +75,7 @@ def Gauss_Siedel(matrice, b, matrix_size):
             if abs(xGS[index_line] - elem) >= EPS:
                 is_conv = 0
             if abs(xGS[index_line] - elem) <= pow(10, 8):
+                print("Delta exceeded!\n")
                 is_div = 0
             """ Update the value of the current element in the vector """
             xGS[index_line] = elem
@@ -152,7 +153,7 @@ def conjugate_gradient_method(A, b):
     p.append(b - multiply(A, x[0]))
     k = 0
     while k < MAX_K:
-        # print k
+        print(k)
         Ap = multiply(A, p[k])
         alpha = r[k].transpose().dot(r[k])
         alpha /= p[k].transpose().dot(Ap)
@@ -167,17 +168,10 @@ def conjugate_gradient_method(A, b):
     return x[k]
 
 def main():
-    matrix_size, A, b = readFromFile("m_rar_2018_4.txt")
-    if verifyMatrix(A):
-        for line_index in range(matrix_size):
-            A[line_index].sort(key=lambda x: x[1])
-        result = Gauss_Siedel(A, b, matrix_size)
-        if result!= None:
-            print("Norma: {0}".format(np.linalg.norm((subMatrices(mulMatrixVector(A, result), b)), np.inf)))
-    """matrix_size, A, b = readFromFile(r"D:\work\Anul3\SEM2\CN\GIT\Calcul_Numeric\Tema4\bonus.txt")
+    matrix_size, A, b = readFromFile(r"m_rar_2018_5.txt")
     x = conjugate_gradient_method(A, b)
     print(x)
-    print(np.linalg.norm(multiply(A, x) - b, np.inf))"""
+    print(np.linalg.norm(multiply(A, x) - b, np.inf))
 
 if __name__ == '__main__':
     main()
