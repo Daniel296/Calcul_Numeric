@@ -1,3 +1,5 @@
+import numpy as np
+import matplotlib.pyplot as plt
 
 def readFromFile(file_path):
     fd = open(file_path, 'rb')
@@ -76,14 +78,77 @@ def progresiveNewton(values, n, x0, xn, x):
 
     return True, L
 
+def interpolSmallestSquares(values, n, x0, xn, x):
+    result = 0
+    if xn < x0:
+        return False, None
+    h = (xn - x0) / (n - 1)
+    """ Determine the interpolation points """
+    x_interpol = [0] * (n)
+    x_interpol[0] = x0
+    for i in range(1, n):
+        x_interpol[i] = x0 + i * h
+    #Construct the polynom: I will have something like: S(x) = a1*pow(x, 4) + a2*pow(x,3) + a3*pow(x,2) + a4*pow(x,1) + a5
+    #Construct the coefficient matrix
+    #For each of the interpolation values
+    coeff_matrix = np.empty([n, n])
+    result_array = np.empty(n)
+    for line_index in range(0, 5):
+        for col_index in range(0, 5):
+            coeff_matrix[line_index][col_index] =  pow(x_interpol[line_index], 4-col_index)
+        result_array[line_index] = values[x_interpol[line_index]]
+
+    #Determine the a coefficient array
+    a = np.linalg.solve(coeff_matrix, result_array)
+    #Determine the value in the point based on Horner's scheme
+    d = np.empty(n)
+    d[0] = a[0]
+    for i in range(1, n):
+        d[i] = a[i] + d[i-1] * x
+
+    result = d[n-1]
+    return True, result
+
+def func(x, values):
+    val = []
+    for x in x:
+        val.append(values[x])
+    return val
+
+def newton(x, values, n, x0, xn):
+    val = []
+    for x in x:
+        val.append(progresiveNewton(values, n, x0, xn, x)[1])
+    return val
+
+def leastSquares(x, values, n, x0, xn):
+    val = []
+    for x in x:
+        val.append(interpolSmallestSquares(values, n, x0, xn, x)[1])
+    return val
+
 def main():
     check, values, n, x0, xn, x = readFromFile("input.txt")
     if check == True:
         check, result = progresiveNewton(values, n, x0, xn, x)
-    if check == True:
-        print(result)
+        if check == True:
+            print("Result with progressive Newton: {0}".format(result))
+        check, result = interpolSmallestSquares(values, n, x0, xn, x)
+        if check == True:
+            print("Result with least squares interpolation: {0}".format(result))
     else:
         print("Couldn't find result!")
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    precision = 50
+    x = [1, 2, 3, 4, 5]
+    ax.plot(x, func(x, values), color='g', label='Original', alpha=.3)
+    x = np.arange(1, 100, 0.5)
+    ax.plot(x, newton(x, values, n, x0, xn), color='b', label='Progressive Newton', alpha=.3)
+    ax.plot(x, leastSquares(x, values, n, x0, xn), color='r', label='Least Squares Interpol', alpha=.3)
+    ax.legend(fancybox=True)
+    plt.show()
 
 if __name__ == '__main__':
     main()
