@@ -1,6 +1,8 @@
 import math
 import numpy as np
 
+sol = []
+
 epsilon = pow(10, -9)
 h = pow(10, -3)
 kmax = 600
@@ -68,7 +70,6 @@ def poly_to_string(p, fd):
 
 def muller(x0, x1, x2):
     k = 0
-    sol = []
     while True:
         h0 = x1 - x0
         h1 = x2 - x1
@@ -83,6 +84,7 @@ def muller(x0, x1, x2):
         max_b = max(b + math.sqrt(b**2 - 4*a*c), b - math.sqrt(b**2 - 4*a*c))
         if (max_b < epsilon):
             print("Values smaller than epsilon!\n")
+            break
         delta_x = 2*c/max_b
         x3 = x2 - delta_x
         k += 1
@@ -91,8 +93,10 @@ def muller(x0, x1, x2):
         x2 = x3
         if delta_x < epsilon or k > kmax or delta_x > pow(10, 8):
             break
+
     if delta_x < epsilon:
         sol.append(x3)
+
     return sol
 
 def horner(x):
