@@ -1,0 +1,5 @@
+Polynomial: 1x^3 - 1x^2 - 2x^1
+Interval is: [-2.0, 2.0]
+Found 1 roots
+x1 = 2.0
+
