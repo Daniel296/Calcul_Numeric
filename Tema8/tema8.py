@@ -72,11 +72,11 @@ def muller(x0, x1, x2):
     while True:
         h0 = x1 - x0
         h1 = x2 - x1
-        ro_0 = (mp(x1) - mp(x0))/h0
-        ro_1 = (mp(x2) - mp(x1))/h1
+        ro_0 = (horner(x1) - horner(x0))/h0
+        ro_1 = (horner(x2) - horner(x1))/h1
         a = (ro_1 - ro_0)/(h1 + h0)
         b = a*h1 + ro_1
-        c = mp(x2)
+        c = horner(x2)
         if b**2 - 4*a*c  < 0:
             print("Nu am identificat radacini reale!\n")
             break
